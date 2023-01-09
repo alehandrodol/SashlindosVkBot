@@ -1,0 +1,8 @@
+vkbottle==4.3.12
+environs==9.5.0
+alembic~=1.9.1
+SQLAlchemy~=1.4.45
+psycopg2-binary
+asyncpg
+pytz==2021.3
+pydantic
