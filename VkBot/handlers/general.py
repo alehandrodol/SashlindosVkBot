@@ -1,12 +1,12 @@
 from vkbottle.bot import Message
 from vkbottle.dispatch.rules.base import RegexRule
 from vkbottle.framework.labeler import BotLabeler
-from vkbottle_types.objects import PhotosPhoto
 
-from Rules import TextPlusRegexpRule, ChatIdRule  # TODO убрать при релизе
+from config import api
+
+from Rules import TextPlusRegexpRule, ChatIdRule  # TODO ChatIdRule убрать при релизе
 from messages.default_msg import PICTURE
-from config import user_api
-from utils.base_utils import my_random, make_reward
+from utils.base_utils import my_random, make_reward, get_photo, change_keyboard
 
 general_labeler = BotLabeler()
 general_labeler.vbml_ignore_case = True
@@ -22,8 +22,14 @@ async def dailies_people(message: Message):
 
 @general_labeler.message(TextPlusRegexpRule(text=PICTURE, regexp_pat=r"^[oо]+[рp]+$"))
 async def test_photo(message: Message):
-    size = (await user_api.photos.get_albums(owner_id="-209871225", album_ids="282103569")).items[0].size
-    offset = my_random(size)
-    photo: PhotosPhoto = (await user_api.photos.get(owner_id="-209871225", album_id="282103569", rev=True, count=1, offset=offset)).items[0]
-
+    photo = await get_photo()
     await message.answer(attachment=f"photo-209871225_{photo.id}")
+
+
+@general_labeler.message(text=("переведи", "gthtdtlb"))
+async def translate(message: Message):
+    if message.reply_message is not None:
+        text = change_keyboard(message.reply_message.text)
+        await message.reply(text)
+    else:
+        await message.reply("Нечего переводить")

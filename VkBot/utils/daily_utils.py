@@ -8,7 +8,7 @@ from vkbottle.bot import Message
 from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
 
 from db.connection import SessionManager
-from db.utils.users import set_user
+from db.utils.users import set_user, get_users_from_chat
 from db.models import Chat, LaunchInfo, User
 
 from messages import default_msg
@@ -42,7 +42,11 @@ async def fill_users(message: Message):
     chat_users: list[UsersUserFull] = chat_users.profiles
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
+        chat_users_db: list[User] = await get_users_from_chat(message.chat_id, session)
+        ids_set = {user.id for user in chat_users_db}
         for profile in chat_users:
+            if profile.id in ids_set:
+                continue
             await set_user(
                 user_id=profile.id,
                 chat_id=message.chat_id,

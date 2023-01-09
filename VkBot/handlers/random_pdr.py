@@ -4,12 +4,12 @@ import pytz
 from datetime import datetime
 
 from vkbottle.bot import BotLabeler, Message
-from vkbottle_types.codegen.objects import UsersUserFull
+from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
 
 from config import api, ctx_storage
 
 from db.connection import SessionManager
-from db.utils.users import get_users_from_chat
+from db.utils.users import get_users_from_chat, update_user
 from db.models import Chat, LaunchInfo, User
 
 from utils import daily_utils
@@ -34,11 +34,11 @@ async def dailies_people(message: Message):
     today = datetime.now(tz=moscow_zone).date()
 
     if not (launch.daily_launch_date is None or today > launch.daily_launch_date):  # Проверка, что сегодня уже выбирали
-        today_pdr: UsersUserFull = await api.users.get(chat.today_pdr)
-        today_pass: UsersUserFull = await api.users.get(chat.today_pass)
+        today_pdr: UsersUserFull = (await api.users.get(chat.today_pdr))[0]
+        today_pass: UsersUserFull = (await api.users.get(chat.today_pass))[0]
         await message.answer(f"Чё? С памятью проблемы?\n"
                              f"Сегодня пидор - {today_pdr.last_name} {today_pdr.first_name}\n"
-                             f"А трахает он - {today_pass.last_name_gen} {today_pass.first_name_gen}")
+                             f"А трахает он - {today_pass.last_name} {today_pass.first_name}")
         return
 
     if not launch.up_to_date_phrase:  # Проверка на то, что фраза дня сгенерирована
@@ -47,7 +47,9 @@ async def dailies_people(message: Message):
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
         chat_users: list[User] = await get_users_from_chat(message.chat_id, session)
-        if len(chat_users) == 0:
+        chat_users_real: MessagesGetConversationMembers = await message.ctx_api.messages. \
+            get_conversation_members(message.peer_id)
+        if len(chat_users) < chat_users_real.count-1:
             await daily_utils.fill_users(message)
             chat_users = await get_users_from_chat(message.chat_id, session)
 
@@ -67,6 +69,8 @@ async def dailies_people(message: Message):
 
     if launch.year_launch_num is None or today.year > launch.year_launch_num:
         chosen_year: ChosenUser = await daily_utils.choose_year_guy(chat_users, chat, launch)
+        chosen_year.user_record.pdr_of_the_year += 1
+        await update_user(chosen_year.user_record)
         await base_utils.make_reward(chosen_year.user_record.id, chosen_year.reward)
         await message.answer(chosen_year.message)
         await asyncio.sleep(3)
@@ -74,6 +78,12 @@ async def dailies_people(message: Message):
     dailies = await daily_utils.choose_dailies(chat_users, chat, launch)
     daily_pdr: ChosenUser = dailies[0]
     daily_pass: ChosenUser = dailies[1]
+
+    daily_pdr.user_record.pdr_num += 1
+    await update_user(daily_pdr.user_record)
+
+    daily_pass.user_record.fucked += 1
+    await update_user(daily_pass.user_record)
 
     await base_utils.make_reward(daily_pdr.user_record.id, daily_pdr.reward)
     await base_utils.make_reward(daily_pass.user_record.id, daily_pass.reward)
@@ -84,7 +94,8 @@ async def dailies_people(message: Message):
         f'{daily_pdr.message}\n'
         f'А трахает он - [id{daily_pass.user_record.id}|{daily_pass.user_record.firstname} '
         f'{daily_pass.user_record.lastname}]\n'
-        f'{daily_pass.message}'
+        f'{daily_pass.message}',
+        attachment=f"photo-209871225_{(await base_utils.get_photo()).id}"
     )
 
     await daily_utils.update_chat(daily_pdr.user_record.id, daily_pass.user_record.id, chat)

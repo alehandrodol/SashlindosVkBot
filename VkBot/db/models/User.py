@@ -15,6 +15,11 @@ class User(DeclarativeBase):
     rating = Column(Integer, default=0)
     pdr_of_the_year = Column(Integer, default=0)
 
+    @staticmethod
+    def params_list() -> list:
+        return [User.id, User.chat_id, User.firstname, User.lastname, User.pdr_num,
+                User.fucked, User.rating, User.pdr_of_the_year]
+
     def __str__(self) -> str:
         return f"Instanse from table users:\n" \
                f"id: {self.id}, chat_id: {self.chat_id}, firstname: {self.firstname}, lastname: {self.lastname},\n" \

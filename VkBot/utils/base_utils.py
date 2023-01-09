@@ -3,12 +3,35 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from vkbottle.bot import Message
+from vkbottle_types.objects import PhotosPhoto
 
+from config import user_api
 from db.connection import SessionManager
 from db.models import User, Chat
 from db.utils import users
 from db.utils.chats import get_chat_by_id, set_chat
 from db.utils.launch import get_launch_info_by_chat_id, set_launch_info
+
+
+def change_keyboard(text):
+    layout = dict(zip(map(ord, '''qwertyuiop[]asdfghjkl;'zxcvbnm,./`QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?~'''),
+                               '''йцукенгшщзхъфывапролджэячсмитьбю.ёЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,Ё'''))
+
+    return text.translate(layout)
+
+
+async def get_photo() -> PhotosPhoto:
+    size = (await user_api.photos.get_albums(owner_id="-209871225", album_ids="282103569")).items[0].size
+    offset = my_random(size)
+    photo: PhotosPhoto = \
+        (await user_api.photos.get(
+            owner_id="-209871225",
+            album_id="282103569",
+            rev=True,
+            count=1,
+            offset=offset
+        )).items[0]
+    return photo
 
 
 async def get_chat_sure(message: Message) -> Chat:
@@ -52,7 +75,6 @@ async def make_reward(user_id: int, points: int):
         user.rating += points
         session.add(user)
         await session.commit()
-
 
 # def is_all_members_recorded(message: Message) -> bool:
 #     group_info = await message.ctx_api.messages.get_conversations_by_id(message.peer_id)
