@@ -1,5 +1,6 @@
 from typing import Optional
 
+from sqlalchemy.engine import ScalarResult
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,3 +20,9 @@ async def set_chat(local_chat_id: int, chat_name: str, session: AsyncSession) ->
     )
     session.add(chat)
     return chat
+
+
+async def get_chats_list(session: AsyncSession) -> list[Chat]:
+    q = select(Chat)
+    chats: ScalarResult = await session.scalars(q)
+    return chats.all()
