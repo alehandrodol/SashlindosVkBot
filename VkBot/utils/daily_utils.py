@@ -8,7 +8,7 @@ from vkbottle.bot import Message
 from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
 
 from db.connection import SessionManager
-from db.utils.users import set_user, get_users_from_chat
+from db.utils.users import set_user, get_all_users_from_chat
 from db.models import Chat, LaunchInfo, User
 
 from messages import default_msg

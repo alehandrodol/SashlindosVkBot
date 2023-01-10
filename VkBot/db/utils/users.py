@@ -14,9 +14,16 @@ async def get_user_by_id(user_id: int, session: AsyncSession) -> Optional[User]:
     return user
 
 
-async def get_users_from_chat(chat_id: int, session: AsyncSession,
-                              user_param: object = User.id) -> list[User]:
+async def get_all_users_from_chat(chat_id: int, session: AsyncSession,
+                                  user_param: object = User.id) -> list[User]:
     q = select(User).where(User.chat_id == chat_id).order_by(user_param)
+    users: ScalarResult = await session.scalars(q)
+    return users.all()
+
+
+async def get_active_users_from_chat(chat_id: int, session: AsyncSession,
+                                     user_param: object = User.id, active: bool = True) -> list[User]:
+    q = select(User).where(User.chat_id == chat_id, User.is_active == active).order_by(user_param)
     users: ScalarResult = await session.scalars(q)
     return users.all()
 
@@ -32,10 +39,13 @@ async def set_user(user_id: int, chat_id: int, firstname: str, lastname: str, se
     return user
 
 
-async def update_user(user: User) -> User:
+async def update_user(user: User, session: Optional[AsyncSession] = None):
+    if session is not None:
+        session.add(user)
+        await session.commit()
+        return
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
         session.add(user)
         await session.commit()
-    return user
-
+    return

@@ -9,7 +9,7 @@ from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversatio
 from config import api, ctx_storage
 
 from db.connection import SessionManager
-from db.utils.users import get_users_from_chat, update_user
+from db.utils.users import get_active_users_from_chat, update_user
 from db.models import Chat, LaunchInfo, User
 
 from utils import daily_utils
@@ -46,10 +46,10 @@ async def dailies_people(message: Message):
 
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
-        chat_users_db: list[User] = await get_users_from_chat(message.chat_id, session)
+        chat_users_db: list[User] = await get_active_users_from_chat(message.chat_id, session)
         if len(chat_users_db) == 0:
             await daily_utils.fill_users(message)
-            chat_users_db = await get_users_from_chat(message.chat_id, session)
+            chat_users_db = await get_active_users_from_chat(message.chat_id, session)
 
     # Проверка, что сообщение не совпадает с фразой дня и 33% на случайную неудачу
     if message.text != launch.day_phrase or base_utils.my_random(100) < 33:

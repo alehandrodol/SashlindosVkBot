@@ -48,7 +48,7 @@ async def kick(message: Message):
 
 
 @general_labeler.message(func=lambda message: message.action.type.value == "chat_invite_user")
-async def kick(message: Message):
+async def invite(message: Message):
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
         user: User = await get_user_by_id(message.from_id, session)
