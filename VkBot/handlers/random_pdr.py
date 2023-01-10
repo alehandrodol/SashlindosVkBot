@@ -46,12 +46,10 @@ async def dailies_people(message: Message):
 
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
-        chat_users: list[User] = await get_users_from_chat(message.chat_id, session)
-        chat_users_real: MessagesGetConversationMembers = await message.ctx_api.messages. \
-            get_conversation_members(message.peer_id)
-        if len(chat_users) < chat_users_real.count-1:
+        chat_users_db: list[User] = await get_users_from_chat(message.chat_id, session)
+        if len(chat_users_db) == 0:
             await daily_utils.fill_users(message)
-            chat_users = await get_users_from_chat(message.chat_id, session)
+            chat_users_db = await get_users_from_chat(message.chat_id, session)
 
     # Проверка, что сообщение не совпадает с фразой дня и 33% на случайную неудачу
     if message.text != launch.day_phrase or base_utils.my_random(100) < 33:
@@ -68,14 +66,14 @@ async def dailies_people(message: Message):
     await daily_utils.update_launch_info(message.from_id, launch)
 
     if launch.year_launch_num is None or today.year > launch.year_launch_num:
-        chosen_year: ChosenUser = await daily_utils.choose_year_guy(chat_users, chat, launch)
+        chosen_year: ChosenUser = await daily_utils.choose_year_guy(chat_users_db, chat, launch)
         chosen_year.user_record.pdr_of_the_year += 1
         await update_user(chosen_year.user_record)
         await base_utils.make_reward(chosen_year.user_record.id, chosen_year.reward)
         await message.answer(chosen_year.message)
         await asyncio.sleep(3)
 
-    dailies = await daily_utils.choose_dailies(chat_users, chat, launch)
+    dailies = await daily_utils.choose_dailies(chat_users_db, chat, launch)
     daily_pdr: ChosenUser = dailies[0]
     daily_pass: ChosenUser = dailies[1]
 

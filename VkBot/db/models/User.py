@@ -1,6 +1,6 @@
 from db.config import DeclarativeBase
 
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 
 
 class User(DeclarativeBase):
@@ -14,6 +14,7 @@ class User(DeclarativeBase):
     fucked = Column(Integer, default=0)
     rating = Column(Integer, default=0)
     pdr_of_the_year = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
 
     @staticmethod
     def params_list() -> list:

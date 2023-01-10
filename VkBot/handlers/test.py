@@ -20,5 +20,3 @@ async def say_handler(message: Message, args: tuple[str]):
 async def test_chat(message: Message):
     await message.answer(f"Я из тестовой беседы")
 
-
-

@@ -2,8 +2,9 @@ from vkbottle.bot import Message
 from vkbottle.dispatch.rules.base import RegexRule
 from vkbottle.framework.labeler import BotLabeler
 
-from config import api
-
+from db.connection import SessionManager
+from db.models import User
+from db.utils.users import get_user_by_id, update_user
 from Rules import TextPlusRegexpRule, ChatIdRule  # TODO ChatIdRule убрать при релизе
 from messages.default_msg import PICTURE
 from utils.base_utils import my_random, make_reward, get_photo, change_keyboard
@@ -33,3 +34,25 @@ async def translate(message: Message):
         await message.reply(text)
     else:
         await message.reply("Нечего переводить")
+
+
+@general_labeler.message(func=lambda message: message.action.type.value == "chat_kick_user")
+async def kick(message: Message):
+    session_maker = SessionManager().get_session_maker()
+    async with session_maker() as session:
+        user: User = await get_user_by_id(message.from_id, session)
+
+    user.is_active = False
+    await update_user(user)
+    await message.answer(f"О, чел вышел, записал")
+
+
+@general_labeler.message(func=lambda message: message.action.type.value == "chat_invite_user")
+async def kick(message: Message):
+    session_maker = SessionManager().get_session_maker()
+    async with session_maker() as session:
+        user: User = await get_user_by_id(message.from_id, session)
+
+    user.is_active = True
+    await update_user(user)
+    await message.answer(f"О, чел вошёл, записал")

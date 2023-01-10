@@ -37,16 +37,12 @@ async def set_day_phrase(launch: LaunchInfo) -> LaunchInfo:
 
 
 async def fill_users(message: Message):
-    chat_users: MessagesGetConversationMembers = await message.ctx_api.messages. \
+    chat_users_real: MessagesGetConversationMembers = await message.ctx_api.messages. \
         get_conversation_members(message.peer_id)
-    chat_users: list[UsersUserFull] = chat_users.profiles
+    chat_users_real: list[UsersUserFull] = chat_users_real.profiles
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
-        chat_users_db: list[User] = await get_users_from_chat(message.chat_id, session)
-        ids_set = {user.id for user in chat_users_db}
-        for profile in chat_users:
-            if profile.id in ids_set:
-                continue
+        for profile in chat_users_real:
             await set_user(
                 user_id=profile.id,
                 chat_id=message.chat_id,
