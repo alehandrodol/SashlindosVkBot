@@ -19,5 +19,6 @@ bot = Bot(
 bot.loop_wrapper.on_startup.append(startup_task())
 bot.loop_wrapper.on_shutdown.append(shutdown_task())
 
+
 if __name__ == "__main__":
     bot.run_forever()

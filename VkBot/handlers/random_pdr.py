@@ -51,25 +51,25 @@ async def dailies_people(message: Message):
             await daily_utils.fill_users(message)
             chat_users_db = await get_active_users_from_chat(message.chat_id, session)
 
-    # Проверка, что сообщение не совпадает с фразой дня и 33% на случайную неудачу
-    if message.text != launch.day_phrase or base_utils.my_random(100) < 33:
+    # Проверка, что сообщение не совпадает с фразой дня и 50% на случайную неудачу
+    if message.text != launch.day_phrase or base_utils.my_random(100) < 50:
         await message.reply(f"{message.text} - эта фраза не является кодом запуска сегодня или является? 🤡\n"
                             f"• Но за попытку получаешь +5")
-        await base_utils.make_reward(message.from_id, 5)
+        await base_utils.make_reward(message.from_id, message.chat_id, 5)
         return
 
     await message.reply(f"Хорош, сегодня [id{message.from_id}|Ты] угадал кодовую фразу!\n"
                         f"• И получил за это +25 очков")
-    await base_utils.make_reward(message.from_id, 25)
+    await base_utils.make_reward(message.from_id, message.chat_id, 25)
     await asyncio.sleep(1)
 
-    await daily_utils.update_launch_info(message.from_id, launch)
+    await daily_utils.update_launch_info(message.from_id, message.chat_id, launch)
 
     if launch.year_launch_num is None or today.year > launch.year_launch_num:
         chosen_year: ChosenUser = await daily_utils.choose_year_guy(chat_users_db, chat, launch)
         chosen_year.user_record.pdr_of_the_year += 1
         await update_user(chosen_year.user_record)
-        await base_utils.make_reward(chosen_year.user_record.id, chosen_year.reward)
+        await base_utils.make_reward(chosen_year.user_record.user_id, message.chat_id, chosen_year.reward)
         await message.answer(chosen_year.message)
         await asyncio.sleep(3)
 
@@ -83,31 +83,31 @@ async def dailies_people(message: Message):
     daily_pass.user_record.fucked += 1
     await update_user(daily_pass.user_record)
 
-    await base_utils.make_reward(daily_pdr.user_record.id, daily_pdr.reward)
-    await base_utils.make_reward(daily_pass.user_record.id, daily_pass.reward)
+    await base_utils.make_reward(daily_pdr.user_record.user_id, message.chat_id, daily_pdr.reward)
+    await base_utils.make_reward(daily_pass.user_record.user_id, message.chat_id, daily_pass.reward)
 
     await message.answer(
-        f'Пидор дня сегодня - [id{daily_pdr.user_record.id}|{daily_pdr.user_record.firstname} '
+        f'Пидор дня сегодня - [id{daily_pdr.user_record.user_id}|{daily_pdr.user_record.firstname} '
         f'{daily_pdr.user_record.lastname}]\n'
         f'{daily_pdr.message}\n'
-        f'А трахает он - [id{daily_pass.user_record.id}|{daily_pass.user_record.firstname} '
+        f'А трахает он - [id{daily_pass.user_record.user_id}|{daily_pass.user_record.firstname} '
         f'{daily_pass.user_record.lastname}]\n'
         f'{daily_pass.message}',
         attachment=f"photo-209871225_{(await base_utils.get_photo()).id}"
     )
 
-    await daily_utils.update_chat(daily_pdr.user_record.id, daily_pass.user_record.id, chat)
+    await daily_utils.update_chat(daily_pdr.user_record.user_id, daily_pass.user_record.user_id, chat)
 
     await asyncio.sleep(1)
-    await message.answer(f'[id{daily_pdr.user_record.id}|{daily_pdr.user_record.firstname}] и '
-                         f'[id{daily_pass.user_record.id}|{daily_pass.user_record.firstname}], '
+    await message.answer(f'[id{daily_pdr.user_record.user_id}|{daily_pdr.user_record.firstname}] и '
+                         f'[id{daily_pass.user_record.user_id}|{daily_pass.user_record.firstname}], '
                          f'вы можете сыграть в рулетку и умножить ваш полученный рейтинг полученный за номинацию.\n'
                          f'Если вы хотите попробовать, напишите "рулетка"🎰')
 
     multi_roulette: MultiRoulette = ctx_storage.get("MultiRoulette")
     multi_roulette.date_for_multi = today
     multi_roulette.users_award = {
-        daily_pdr.user_record.id: daily_pdr.reward,
-        daily_pass.user_record.id: daily_pass.reward
+        daily_pdr.user_record.user_id: daily_pdr.reward,
+        daily_pass.user_record.user_id: daily_pass.reward
     }
     ctx_storage.set("MultiRoulette", multi_roulette)

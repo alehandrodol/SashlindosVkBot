@@ -8,7 +8,7 @@ from vkbottle.bot import Message
 from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
 
 from db.connection import SessionManager
-from db.utils.users import set_user, get_all_users_from_chat
+from db.utils.users import set_user, get_user_by_user_id
 from db.models import Chat, LaunchInfo, User
 
 from messages import default_msg
@@ -104,14 +104,14 @@ async def choose_dailies(chat_users: list[User], chat: Chat, launch: LaunchInfo)
     chat_users.pop(pdr_ind)
     daily_pass: User = chat_users[my_random(len(chat_users))]
 
-    pdr_points, pdr_msg = await calculate_daily_points(daily_pdr.id, chat, launch, DailyStatus.pdr)
-    pass_points, pass_msg = await calculate_daily_points(daily_pass.id, chat, launch, DailyStatus.passive)
+    pdr_points, pdr_msg = await calculate_daily_points(daily_pdr.user_id, chat, launch, DailyStatus.pdr)
+    pass_points, pass_msg = await calculate_daily_points(daily_pass.user_id, chat, launch, DailyStatus.passive)
 
     return ChosenUser(user_record=daily_pdr, reward=pdr_points, message=pdr_msg), \
         ChosenUser(user_record=daily_pass, reward=pass_points, message=pass_msg)
 
 
-async def update_launch_info(who_launched_id: int, launch: LaunchInfo):
+async def update_launch_info(who_launched_id: int, chat_id: int, launch: LaunchInfo):
     moscow_zone = pytz.timezone("Europe/Moscow")
     today = datetime.now(tz=moscow_zone).date()
 
@@ -122,10 +122,10 @@ async def update_launch_info(who_launched_id: int, launch: LaunchInfo):
     else:
         launch.launch_streak = 1
 
-    launch.who_launched = who_launched_id
-
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
+        user: User = await get_user_by_user_id(who_launched_id, chat_id, session)
+        launch.who_launched = user.id
         session.add(launch)
         await session.commit()
 
@@ -143,9 +143,9 @@ async def update_chat(today_pdr: int, today_pass: int, chat: Chat):
 async def choose_year_guy(chat_users: list[User], chat: Chat, launch: LaunchInfo) -> ChosenUser:
     year_pdr = chat_users[my_random(len(chat_users))]
     year_pdr_message = f"Ого, наступил новый год, и я вычислил пидора этого года!\n" \
-                       f"И пидором этого будет - [id{year_pdr.id}|{year_pdr.firstname} {year_pdr.lastname}]\n" \
+                       f"И пидором этого будет - [id{year_pdr.user_id}|{year_pdr.firstname} {year_pdr.lastname}]\n" \
                        f"• и за это он получает +1000 рейтинга!!!"
-    chat.year_pdr = year_pdr.id
+    chat.year_pdr = year_pdr.user_id
     moscow_zone = pytz.timezone("Europe/Moscow")
     launch.year_launch_num = datetime.now(tz=moscow_zone).date().year
     session_maker = SessionManager().get_session_maker()

@@ -13,7 +13,7 @@ stat_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при р
 
 @stat_labeler.message(text=default_msg.ALL_STATS)
 async def all_stat(message: Message):
-    user_param = User.id
+    user_param = User.user_id
     match message.text:
         case "статистика":
             user_param = User.pdr_num

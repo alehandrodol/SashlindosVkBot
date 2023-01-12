@@ -68,10 +68,10 @@ def my_random(right_border: int) -> int:
     return datetime.today().microsecond % right_border
 
 
-async def make_reward(user_id: int, points: int):
+async def make_reward(user_id: int, chat_id: int, points: int):
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
-        user: User = await users.get_user_by_id(user_id, session)
+        user: User = await users.get_user_by_user_id(user_id, chat_id, session)
         user.rating += points
         session.add(user)
         await session.commit()
@@ -99,7 +99,7 @@ async def refresh_user_list(chats: list[Chat], session: AsyncSession):
 
 
 async def full_users_check(users_list: list[User], chat_id: int, session: AsyncSession):
-    users_dict = {user.id: user for user in users_list}
+    users_dict = {user.user_id: user for user in users_list}
     real_members = (await api.messages.get_conversation_members(2000000000+chat_id)).profiles
     for member in real_members:
         if member.id in users_dict.keys():
@@ -116,7 +116,7 @@ async def full_users_check(users_list: list[User], chat_id: int, session: AsyncS
             )
     real_ids = {mem.id for mem in real_members}
     for user in users_list:
-        if user.id not in real_ids and user.is_active:
+        if user.user_id not in real_ids and user.is_active:
             user.is_active = False
             await users.update_user(user)
     return

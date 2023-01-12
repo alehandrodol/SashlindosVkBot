@@ -34,7 +34,7 @@ async def make_stat_message(message: Message, sort_type: object) -> str:
                 f'{user.lastname} {"имел титул" if user.pdr_num else "зашёл не в ту дверь"}: {count_num} ' \
                 f'{"раза" if count_num % 10 in [2, 3, 4] and count_num not in [12, 13, 14] else "раз"}' \
                 f'{" (не действующий)" if not user.is_active else ""}'
-        if user.id == message.from_id:
+        if user.user_id == message.from_id:
             row += " 🤡"
 
         res_list_msg.append(row)
