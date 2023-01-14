@@ -7,6 +7,7 @@ import pytz
 from vkbottle.bot import Message
 from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
 
+from config import moscow_zone
 from db.connection import SessionManager
 from db.utils.users import set_user, get_user_by_user_id
 from db.models import Chat, LaunchInfo, User
@@ -112,7 +113,6 @@ async def choose_dailies(chat_users: list[User], chat: Chat, launch: LaunchInfo)
 
 
 async def update_launch_info(who_launched_id: int, chat_id: int, launch: LaunchInfo):
-    moscow_zone = pytz.timezone("Europe/Moscow")
     today = datetime.now(tz=moscow_zone).date()
 
     launch.up_to_date_phrase = False
@@ -146,7 +146,6 @@ async def choose_year_guy(chat_users: list[User], chat: Chat, launch: LaunchInfo
                        f"И пидором этого будет - [id{year_pdr.user_id}|{year_pdr.firstname} {year_pdr.lastname}]\n" \
                        f"• и за это он получает +1000 рейтинга!!!"
     chat.year_pdr = year_pdr.user_id
-    moscow_zone = pytz.timezone("Europe/Moscow")
     launch.year_launch_num = datetime.now(tz=moscow_zone).date().year
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:

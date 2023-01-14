@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 6ab29b138ecd
+Revision ID: 611184cc4070
 Revises: 
-Create Date: 2023-01-12 18:04:19.340000
+Create Date: 2023-01-12 21:29:19.651182
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6ab29b138ecd'
+revision = '611184cc4070'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -42,14 +42,14 @@ def upgrade() -> None:
     sa.UniqueConstraint('id', name=op.f('uq__users__id'))
     )
     op.create_table('inventory',
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=True),
-    sa.Column('user_row_id', sa.Integer(), nullable=False),
-    sa.Column('item_name', sa.String(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('user_row_id', sa.Integer(), nullable=True),
+    sa.Column('item_name', sa.String(), nullable=True),
     sa.Column('count', sa.Integer(), nullable=True),
     sa.Column('get_date', sa.Date(), nullable=False),
     sa.Column('expired_date', sa.Date(), nullable=True),
     sa.ForeignKeyConstraint(['user_row_id'], ['users.id'], name=op.f('fk__inventory__user_row_id__users')),
-    sa.PrimaryKeyConstraint('user_row_id', 'item_name', name=op.f('pk__inventory'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk__inventory'))
     )
     op.create_table('launch_info',
     sa.Column('chat_id', sa.Integer(), nullable=False),
@@ -63,7 +63,6 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['who_launched'], ['users.id'], name=op.f('fk__launch_info__who_launched__users')),
     sa.PrimaryKeyConstraint('chat_id', name=op.f('pk__launch_info'))
     )
-
     # ### end Alembic commands ###
 
 

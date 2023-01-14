@@ -1,4 +1,5 @@
 import asyncio
+import pytz
 
 from vkbottle import API, BuiltinStateDispenser, Bot
 from vkbottle.bot import BotLabeler
@@ -16,6 +17,8 @@ api = API(env.str("TOKEN"))
 user_api = API(env.str("USER_TOKEN"))
 labeler = BotLabeler()
 state_dispenser = BuiltinStateDispenser()
+
+moscow_zone = pytz.timezone("Europe/Moscow")
 
 
 ctx_storage = CtxStorage()

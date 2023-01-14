@@ -1,4 +1,3 @@
-import pytz
 from datetime import datetime
 
 from typing import Union
@@ -6,7 +5,7 @@ from typing import Union
 from vkbottle.bot import Message
 from vkbottle.dispatch.rules import ABCRule
 
-from config import ctx_storage
+from config import ctx_storage, moscow_zone
 
 from my_types import MultiRoulette, RouletteType
 
@@ -22,7 +21,6 @@ class RouletteRule(ABCRule[Message]):
             await message.answer("Вы сегодня не состоите в номинации или уже использовали😬")
             return False
 
-        moscow_zone = pytz.timezone("Europe/Moscow")
         today = datetime.now(tz=moscow_zone).date()
 
         if today != multi_roulette.date_for_multi:

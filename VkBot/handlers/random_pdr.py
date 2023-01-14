@@ -1,19 +1,18 @@
 import asyncio
 
-import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from vkbottle.bot import BotLabeler, Message
 from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
 
-from config import api, ctx_storage
+from config import api, ctx_storage, moscow_zone
 
 from db.connection import SessionManager
 from db.utils.users import get_active_users_from_chat, update_user
+from db.utils.items import update_item
 from db.models import Chat, LaunchInfo, User
 
-from utils import daily_utils
-from utils import base_utils
+from utils import daily_utils, base_utils, items_utils
 
 from messages import default_msg
 from my_types import ChosenUser, MultiRoulette
@@ -30,7 +29,6 @@ async def dailies_people(message: Message):
     chat: Chat = await base_utils.get_chat_sure(message)
     launch: LaunchInfo = await base_utils.get_launch_info_sure(message.chat_id)
 
-    moscow_zone = pytz.timezone("Europe/Moscow")
     today = datetime.now(tz=moscow_zone).date()
 
     if not (launch.daily_launch_date is None or today > launch.daily_launch_date):  # Проверка, что сегодня уже выбирали
@@ -53,9 +51,15 @@ async def dailies_people(message: Message):
 
     # Проверка, что сообщение не совпадает с фразой дня и 50% на случайную неудачу
     if message.text != launch.day_phrase or base_utils.my_random(100) < 50:
+        item_try = await items_utils.get_item_sure("launch_try", message.from_id, message.chat_id)
+        has_try = True if item_try.expired_date is not None and today <= item_try.expired_date else False
         await message.reply(f"{message.text} - эта фраза не является кодом запуска сегодня или является? 🤡\n"
-                            f"• Но за попытку получаешь +5")
-        await base_utils.make_reward(message.from_id, message.chat_id, 5)
+                            f"{'• Но за попытку получаешь +7' if not has_try else '• Балы даются только за первую попытку в день :)'}")
+        if not has_try:
+            await base_utils.make_reward(message.from_id, message.chat_id, 7)
+            item_try.count = 1
+            item_try.expired_date = today + timedelta(days=1)
+            await update_item(item_try)
         return
 
     await message.reply(f"Хорош, сегодня [id{message.from_id}|Ты] угадал кодовую фразу!\n"

@@ -4,7 +4,7 @@ from .games import games_labeler
 from .general import general_labeler
 from .statistics import stat_labeler
 
-
+# Располагать от более приоритетных к менее, а при неопределённости более медленные в конец
 labelers = (daily_labeler, stat_labeler, general_labeler, games_labeler, chat_labeler)
 
 
