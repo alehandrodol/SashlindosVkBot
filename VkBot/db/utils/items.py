@@ -5,7 +5,7 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.connection import SessionManager
-from db.models import Inventory
+from db.models import Inventory, TagPhoto
 
 
 async def get_item(item_name: str, user_row_id: int, session: AsyncSession) -> Optional[Inventory]:
@@ -34,3 +34,9 @@ async def update_item(item: Inventory) -> None:
         session.add(item)
         await session.commit()
     return
+
+
+async def get_photo_tag(item_id: int, session: AsyncSession) -> TagPhoto:
+    q = select(TagPhoto).where(TagPhoto.inventory_id == item_id)
+    tag_photo: TagPhoto = await session.scalar(q)
+    return tag_photo

@@ -13,3 +13,10 @@ class Inventory(DeclarativeBase):
     get_date = Column(Date, nullable=False)
     expired_date = Column(Date, nullable=True)
 
+
+class TagPhoto(DeclarativeBase):
+    __tablename__ = "tags_photos"
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    inventory_id = Column(Integer, ForeignKey("inventory.id"))
+    attachment_str = Column(Integer)
