@@ -1,11 +1,11 @@
 from .User import User
 from .Chats import Chat, LaunchInfo
-from .Inventory import Inventory, TagPhoto
+from .Inventory import Inventory, TagDoc
 
 __all__ = (
     "User",
     "Chat",
     "LaunchInfo",
     "Inventory",
-    "TagPhoto"
+    "TagDoc"
 )

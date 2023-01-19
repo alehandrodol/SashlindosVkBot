@@ -34,22 +34,6 @@ async def get_photo() -> PhotosPhoto:
     return photo
 
 
-async def get_chat_sure(message: Message) -> Chat:
-    """
-    Получение чата откуда отправлено сообщение, и если его не существует, то его создание
-    :param message:
-    :return: Chat
-    """
-    session_maker = SessionManager().get_session_maker()
-    async with session_maker() as session:
-        if (chat := await get_chat_by_id(local_chat_id=message.chat_id, session=session)) is None:
-            chat_name = await message.ctx_api.messages.get_conversations_by_id(message.peer_id)
-            chat_name = chat_name.items[0].chat_settings.title
-            chat = await set_chat(local_chat_id=message.chat_id, chat_name=chat_name, session=session)
-        await session.commit()
-    return chat
-
-
 async def get_launch_info_sure(chat_id: int):
     """
     Получение launch_info откуда отправлено сообщение по id чата, и если его не существует, то его создание

@@ -37,3 +37,8 @@ class RouletteType(Enum):
     color = "color"
     triple = "triple"
     number = "number"
+
+
+class Items(Enum):
+    launch = "launch_try"
+    tags = "item_tag"

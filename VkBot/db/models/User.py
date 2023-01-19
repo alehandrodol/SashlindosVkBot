@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 class User(DeclarativeBase):
     __tablename__ = "users"
 
-    id = Column(Integer, autoincrement=True, primary_key=True, unique=True)
+    row_id = Column(Integer, autoincrement=True, primary_key=True, unique=True)
     user_id = Column(Integer, nullable=False)
     chat_id = Column(Integer, ForeignKey('chats.id'), nullable=False)
     firstname = Column(String, nullable=False)

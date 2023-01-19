@@ -19,6 +19,7 @@ async def set_chat(local_chat_id: int, chat_name: str, session: AsyncSession) ->
         name=chat_name
     )
     session.add(chat)
+    await session.commit()
     return chat
 
 

@@ -1,4 +1,4 @@
-from .objects import ChosenUser, Color, MultiRoulette, RouletteType
+from .objects import ChosenUser, Color, MultiRoulette, RouletteType, Items
 
 
-__all__ = ("ChosenUser", "Color", "MultiRoulette", "RouletteType")
+__all__ = ("ChosenUser", "Color", "MultiRoulette", "RouletteType", "Items")

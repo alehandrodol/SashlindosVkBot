@@ -27,5 +27,5 @@ class LaunchInfo(DeclarativeBase):
     up_to_date_phrase = Column(Boolean, default=False)
     daily_launch_date = Column(Date, nullable=True)
     year_launch_num = Column(Integer, nullable=True)
-    who_launched = Column(Integer, ForeignKey('users.id'), nullable=True)
+    who_launched = Column(Integer, ForeignKey('users.row_id'), nullable=True)
     launch_streak = Column(Integer, default=1)

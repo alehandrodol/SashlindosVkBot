@@ -18,7 +18,7 @@ general_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при
 async def dailies_people(message: Message):
     minus_rat = my_random(11)
     await message.reply(f"[id{message.from_id}|Ты] норм? Я тебе сейчас allну по ебалу🤬 (-{minus_rat} рейтинга)")
-    await make_reward(message.from_id, message.chat_id, minus_rat)
+    await make_reward(message.from_id, message.chat_id, minus_rat*-1)
 
 
 @general_labeler.message(TextPlusRegexpRule(text=PICTURE, regexp_pat=r"^[oо]+[рp]+$"))

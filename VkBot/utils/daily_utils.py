@@ -125,7 +125,7 @@ async def update_launch_info(who_launched_id: int, chat_id: int, launch: LaunchI
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
         user: User = await get_user_by_user_id(who_launched_id, chat_id, session)
-        launch.who_launched = user.id
+        launch.who_launched = user.row_id
         session.add(launch)
         await session.commit()
 

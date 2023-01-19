@@ -9,7 +9,7 @@ from db.models import User
 
 
 async def get_user_by_id(row_id: int, session: AsyncSession) -> Optional[User]:
-    q = select(User).where(User.id == row_id)
+    q = select(User).where(User.row_id == row_id)
     user: User = await session.scalar(q)
     return user
 

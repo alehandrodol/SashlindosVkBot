@@ -10,12 +10,13 @@ from config import api, ctx_storage, moscow_zone
 from db.connection import SessionManager
 from db.utils.users import get_active_users_from_chat, update_user
 from db.utils.items import update_item
+from db.utils.chats import get_chat_by_id
 from db.models import Chat, LaunchInfo, User
 
 from utils import daily_utils, base_utils, items_utils
 
 from messages import default_msg
-from my_types import ChosenUser, MultiRoulette
+from my_types import ChosenUser, MultiRoulette, Items
 from Rules import ChatIdRule  # TODO убрать при релизе
 
 
@@ -26,7 +27,12 @@ daily_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при �
 
 @daily_labeler.message(text=default_msg.DAILY)
 async def dailies_people(message: Message):
-    chat: Chat = await base_utils.get_chat_sure(message)
+    session_maker = SessionManager().get_session_maker()
+    async with session_maker() as session:
+        chat: Chat = await get_chat_by_id(message.chat_id, session)
+    if chat is None:
+        await message.answer("Меня нужно сначала активировать🤡")
+        return
     launch: LaunchInfo = await base_utils.get_launch_info_sure(message.chat_id)
 
     today = datetime.now(tz=moscow_zone).date()
@@ -45,13 +51,10 @@ async def dailies_people(message: Message):
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
         chat_users_db: list[User] = await get_active_users_from_chat(message.chat_id, session)
-        if len(chat_users_db) == 0:
-            await daily_utils.fill_users(message)
-            chat_users_db = await get_active_users_from_chat(message.chat_id, session)
 
     # Проверка, что сообщение не совпадает с фразой дня и 50% на случайную неудачу
     if message.text != launch.day_phrase or base_utils.my_random(100) < 50:
-        item_try = await items_utils.get_item_sure("launch_try", message.from_id, message.chat_id)
+        item_try = await items_utils.get_item_sure(Items.launch.value, message.from_id, message.chat_id)
         has_try = True if item_try.expired_date is not None and today <= item_try.expired_date else False
         await message.reply(f"{message.text} - эта фраза не является кодом запуска сегодня или является? 🤡\n"
                             f"{'• Но за попытку получаешь +7' if not has_try else '• Балы даются только за первую попытку в день :)'}")

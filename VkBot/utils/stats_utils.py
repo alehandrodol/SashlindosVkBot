@@ -13,7 +13,7 @@ async def make_stat_message(message: Message, sort_type: object) -> str:
         users_list: list[User] = await users.get_active_users_from_chat(chat_id=message.chat_id, session=session,
                                                                         user_param=sort_type.desc())
         extension: list[User] = await users.get_active_users_from_chat(chat_id=message.chat_id, session=session,
-                                                                        user_param=sort_type.desc(), active=False)
+                                                                       user_param=sort_type.desc(), active=False)
     users_list.extend(extension)
     res_list_msg = []
     ind = 1
