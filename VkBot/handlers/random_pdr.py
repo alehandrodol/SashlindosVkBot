@@ -55,7 +55,7 @@ async def dailies_people(message: Message):
     # Проверка, что сообщение не совпадает с фразой дня и 50% на случайную неудачу
     if message.text != launch.day_phrase or base_utils.my_random(100) < 50:
         item_try = await items_utils.get_item_sure(Items.launch.value, message.from_id, message.chat_id)
-        has_try = True if item_try.expired_date is not None and today <= item_try.expired_date else False
+        has_try = True if item_try.expired_date is not None and today < item_try.expired_date else False
         await message.reply(f"{message.text} - эта фраза не является кодом запуска сегодня или является? 🤡\n"
                             f"{'• Но за попытку получаешь +7' if not has_try else '• Балы даются только за первую попытку в день :)'}")
         if not has_try:
@@ -65,12 +65,15 @@ async def dailies_people(message: Message):
             await update_item(item_try)
         return
 
+    launch = await daily_utils.update_launch_info(message.from_id, message.chat_id, launch)
+    addition_msg = f"О, а у тебя уже стрик из запусков: {launch.launch_streak} (кол-во дней)\n• За это ты получил +1😎"
     await message.reply(f"Хорош, сегодня [id{message.from_id}|Ты] угадал кодовую фразу!\n"
-                        f"• И получил за это +25 очков")
+                        f"• И получил за это +25 очков\n"
+                        f"{'' if launch.launch_streak == 1 else addition_msg}")
+
+    launch_reward = 26 if launch.launch_streak > 1 else 25
     await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=25)
     await asyncio.sleep(1)
-
-    await daily_utils.update_launch_info(message.from_id, message.chat_id, launch)
 
     if launch.year_launch_num is None or today.year > launch.year_launch_num:
         chosen_year: ChosenUser = await daily_utils.choose_year_guy(chat_users_db, chat, launch)

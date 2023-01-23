@@ -71,6 +71,7 @@ async def startup_task():
     async with session_maker() as session:
         chats = await get_chats_list(session)
         await refresh_user_list(chats, session)
+        await session.commit()
     await spammer(chats, "Я проснулся и готов работать!")
 
 
@@ -101,7 +102,8 @@ async def full_users_check(users_list: list[User], chat_id: int, session: AsyncS
                 chat_id=chat_id,
                 firstname=member.first_name,
                 lastname=member.last_name,
-                session=session
+                session=session,
+                man_commit=True
             )
     real_ids = {mem.id for mem in real_members}
     for user in users_list:

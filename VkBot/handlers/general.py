@@ -2,9 +2,11 @@ from vkbottle.bot import Message
 from vkbottle.dispatch.rules.base import RegexRule
 from vkbottle.framework.labeler import BotLabeler
 
+from config import api
+
 from db.connection import SessionManager
 from db.models import User
-from db.utils.users import get_user_by_user_id, update_user
+from db.utils.users import get_user_by_user_id, update_user, set_user
 from Rules import TextPlusRegexpRule, ChatIdRule  # TODO ChatIdRule убрать при релизе
 from messages.default_msg import PICTURE
 from utils.base_utils import my_random, make_reward, get_photo, change_keyboard
@@ -57,6 +59,20 @@ async def invite(message: Message):
     async with session_maker() as session:
         user: User = await get_user_by_user_id(message.from_id, message.chat_id, session)
 
-    user.is_active = True
-    await update_user(user)
-    await message.answer(f"О, чел вошёл, записал")
+    if user is None:
+        session_maker = SessionManager().get_session_maker()
+        async with session_maker() as session:
+            new_user = (await api.users.get(user_ids=message.from_id))[0]
+            await set_user(
+                user_id=new_user.id,
+                chat_id=message.chat_id,
+                firstname=new_user.first_name,
+                lastname=new_user.last_name,
+                session=session
+            )
+            await message.answer(f"О, новый чувак, добавил его в список!\n"
+                                 f"Здорова [id{message.from_id}|{new_user.first_name}]!")
+    else:
+        user.is_active = True
+        await update_user(user)
+        await message.answer(f"О, чел вернулся, записал")

@@ -7,7 +7,7 @@ from utils.base_utils import make_reward
 from db.models import Votes, User
 from db.utils import votes, users
 
-message_true = "Голосование завершено!\nРезультат положительный🥳\n{first} {last} {g_or_l} {rep} рейтинга!!!"
+message_true = "Голосование завершено!\nРезультат положительный🥳\n• {first} {last} {g_or_l} {rep} рейтинга!!!"
 
 
 async def vote_remind(message: Message):

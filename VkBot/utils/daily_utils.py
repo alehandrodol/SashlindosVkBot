@@ -49,7 +49,8 @@ async def fill_users(message: Message):
                 chat_id=message.chat_id,
                 firstname=profile.first_name,
                 lastname=profile.last_name,
-                session=session
+                session=session,
+                man_commit=True
             )
         await session.commit()
 
@@ -112,22 +113,23 @@ async def choose_dailies(chat_users: list[User], chat: Chat, launch: LaunchInfo)
         ChosenUser(user_record=daily_pass, reward=pass_points, message=pass_msg)
 
 
-async def update_launch_info(who_launched_id: int, chat_id: int, launch: LaunchInfo):
+async def update_launch_info(who_launched_id: int, chat_id: int, launch: LaunchInfo) -> LaunchInfo:
     today = datetime.now(tz=moscow_zone).date()
-
-    launch.up_to_date_phrase = False
-    launch.daily_launch_date = today
-    if launch.who_launched == who_launched_id:
-        launch.launch_streak += 1
-    else:
-        launch.launch_streak = 1
-
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
         user: User = await get_user_by_user_id(who_launched_id, chat_id, session)
+
+        launch.up_to_date_phrase = False
+        launch.daily_launch_date = today
+        if launch.who_launched == user.row_id:
+            launch.launch_streak += 1
+        else:
+            launch.launch_streak = 1
+
         launch.who_launched = user.row_id
         session.add(launch)
         await session.commit()
+    return launch
 
 
 async def update_chat(today_pdr: int, today_pass: int, chat: Chat):

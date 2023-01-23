@@ -36,7 +36,8 @@ async def get_active_users_from_chat(chat_id: int, session: AsyncSession,
     return users.all()
 
 
-async def set_user(user_id: int, chat_id: int, firstname: str, lastname: str, session: AsyncSession) -> User:
+async def set_user(user_id: int, chat_id: int, firstname: str, lastname: str, session: AsyncSession,
+                   man_commit: bool = False) -> User:
     user = User(
         user_id=user_id,
         chat_id=chat_id,
@@ -44,6 +45,8 @@ async def set_user(user_id: int, chat_id: int, firstname: str, lastname: str, se
         lastname=lastname
     )
     session.add(user)
+    if not man_commit:
+        await session.commit()
     return user
 
 
