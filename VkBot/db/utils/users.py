@@ -8,9 +8,11 @@ from db.connection import SessionManager
 from db.models import User
 
 
-async def get_user_by_id(row_id: int, session: AsyncSession) -> Optional[User]:
-    q = select(User).where(User.row_id == row_id)
-    user: User = await session.scalar(q)
+async def get_user_by_id(row_id: int) -> Optional[User]:
+    session_maker = SessionManager().get_session_maker()
+    async with session_maker() as session:
+        q = select(User).where(User.row_id == row_id)
+        user: User = await session.scalar(q)
     return user
 
 

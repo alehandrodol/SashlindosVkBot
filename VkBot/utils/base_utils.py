@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -52,10 +53,14 @@ def my_random(right_border: int) -> int:
     return datetime.today().microsecond % right_border
 
 
-async def make_reward(user_id: int, chat_id: int, points: int):
+async def make_reward(points: int, user_id: Optional[int] = None, user_row_id: Optional[int] = None,
+                      chat_id: Optional[int] = None):
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
-        user: User = await users.get_user_by_user_id(user_id, chat_id, session)
+        if user_row_id is None:
+            user: User = await users.get_user_by_user_id(user_id, chat_id, session)
+        else:
+            user: User = await users.get_user_by_id(user_row_id)
         user.rating += points
         session.add(user)
         await session.commit()

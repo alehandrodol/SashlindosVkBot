@@ -62,6 +62,6 @@ async def start_roulette(message: Message, args: tuple[RouletteType, str]):
         await message.answer(f"Ебать😱, я не верю своим глазам, я не думал, что этот день когда-либо наступит...\n"
                              f"Но ты сделал это, ты умножил сегодняшний приз в 36 раз"
                              f"И получил сверху {reward * (result-1)}")
-    await base_utils.make_reward(message.from_id, message.chat_id, reward * (result-1))
+    await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=reward * (result-1))
     multi_roulette.users_award.pop(message.from_id)
     ctx_storage.set("MultiRoulette", multi_roulette)

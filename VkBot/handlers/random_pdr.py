@@ -59,7 +59,7 @@ async def dailies_people(message: Message):
         await message.reply(f"{message.text} - эта фраза не является кодом запуска сегодня или является? 🤡\n"
                             f"{'• Но за попытку получаешь +7' if not has_try else '• Балы даются только за первую попытку в день :)'}")
         if not has_try:
-            await base_utils.make_reward(message.from_id, message.chat_id, 7)
+            await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=7)
             item_try.count = 1
             item_try.expired_date = today + timedelta(days=1)
             await update_item(item_try)
@@ -67,7 +67,7 @@ async def dailies_people(message: Message):
 
     await message.reply(f"Хорош, сегодня [id{message.from_id}|Ты] угадал кодовую фразу!\n"
                         f"• И получил за это +25 очков")
-    await base_utils.make_reward(message.from_id, message.chat_id, 25)
+    await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=25)
     await asyncio.sleep(1)
 
     await daily_utils.update_launch_info(message.from_id, message.chat_id, launch)
@@ -76,7 +76,8 @@ async def dailies_people(message: Message):
         chosen_year: ChosenUser = await daily_utils.choose_year_guy(chat_users_db, chat, launch)
         chosen_year.user_record.pdr_of_the_year += 1
         await update_user(chosen_year.user_record)
-        await base_utils.make_reward(chosen_year.user_record.user_id, message.chat_id, chosen_year.reward)
+        await base_utils.make_reward(user_id=chosen_year.user_record.user_id, chat_id=message.chat_id,
+                                     points=chosen_year.reward)
         await message.answer(chosen_year.message)
         await asyncio.sleep(3)
 
@@ -90,8 +91,10 @@ async def dailies_people(message: Message):
     daily_pass.user_record.fucked += 1
     await update_user(daily_pass.user_record)
 
-    await base_utils.make_reward(daily_pdr.user_record.user_id, message.chat_id, daily_pdr.reward)
-    await base_utils.make_reward(daily_pass.user_record.user_id, message.chat_id, daily_pass.reward)
+    await base_utils.make_reward(user_id=daily_pdr.user_record.user_id, chat_id=message.chat_id,
+                                 points=daily_pdr.reward)
+    await base_utils.make_reward(user_id=daily_pass.user_record.user_id, chat_id=message.chat_id,
+                                 points=daily_pass.reward)
 
     await message.answer(
         f'Пидор дня сегодня - [id{daily_pdr.user_record.user_id}|{daily_pdr.user_record.firstname} '
