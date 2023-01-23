@@ -15,6 +15,8 @@ from db.utils import items, users
 class CheckTagInsideRule(ABCRule[Message]):
     async def check(self, message: Message) -> Union[bool, dict]:
         if (user_id := re.search(r"\[id[0-9]*\|", message.text)) is not None:
+            if message.text[:4] in {"+rep", "-rep"}:
+                return False
             session_maker = SessionManager().get_session_maker()
             async with session_maker() as session:
                 user_db: User = await users.get_user_by_user_id(user_id=int(user_id.group(0)[3:-1]),
@@ -24,4 +26,5 @@ class CheckTagInsideRule(ABCRule[Message]):
                 if item_db is None or item_db.expired_date < today:
                     return False
             return {"user": user_db, "item": item_db}
+        return False
 

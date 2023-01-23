@@ -1,4 +1,3 @@
-import asyncio
 import pytz
 
 from vkbottle import API, BuiltinStateDispenser, Bot
@@ -28,4 +27,10 @@ ctx_storage.set(
         date_for_multi=None,
         users_award={}
     )
+)
+
+bot = Bot(
+    api=api,
+    labeler=labeler,
+    state_dispenser=state_dispenser
 )

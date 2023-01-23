@@ -42,11 +42,11 @@ async def get_item_tag(item_id: int, session: AsyncSession) -> TagDoc:
     return tag_photo
 
 
-async def set_tags_docs(inventory_id: int, attachment: str, session: AsyncSession):
+async def set_tags_docs(inventory_id: int, attachment: str, session: AsyncSession) -> TagDoc:
     tag_doc = TagDoc(
         inventory_id=inventory_id,
         attachment_str=attachment
     )
     session.add(tag_doc)
     await session.commit()
-    return
+    return tag_doc
