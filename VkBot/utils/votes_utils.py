@@ -27,4 +27,4 @@ async def end_vote(message: Message, poll_id: int, rep: str, vote: Votes):
             rep=rep
         ))
     else:
-        await message.answer("Голосование завершено!\nРезультат отрицательный🥲\n")
+        await message.answer("Голосование завершено!\nРезультат отрицательный😐\n")

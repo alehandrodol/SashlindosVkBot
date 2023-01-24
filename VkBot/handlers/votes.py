@@ -29,8 +29,9 @@ async def start_vote(message: Message, target_ui: int, rep: int):
     poll = await user_api.polls.create(
         question=f"{'+' if rep > 0 else ''}{str(rep)} рейтинга для {t_u.firstname} {t_u.lastname}",
         owner_id=-209871225,
-        end_date=(datetime.now(tz=moscow_zone) + timedelta(seconds=30)).timestamp(),
-        add_answers=json.dumps(['+', '-'])
+        end_date=(datetime.now(tz=moscow_zone) + timedelta(hours=1)).timestamp(),
+        add_answers=json.dumps(['+', '-']),
+        background_id=1
     )
     post = await user_api.wall.post(
         owner_id=-209871225,
@@ -40,9 +41,9 @@ async def start_vote(message: Message, target_ui: int, rep: int):
     )
     await message.answer(message="@all Началось голосование!", attachment=f"poll-209871225_{poll.id}")
 
-    await asyncio.sleep(5)
+    await asyncio.sleep(1801)
     await vote_remind(message)
 
-    await asyncio.sleep(5)
+    await asyncio.sleep(1801)
     await end_vote(message, poll.id, str(rep), vote)
     return

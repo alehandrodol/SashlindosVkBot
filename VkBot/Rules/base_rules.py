@@ -15,7 +15,7 @@ class TextPlusRegexpRule(ABCRule[Message]):
         self.text = text
 
     async def check(self, message: Message) -> bool:
-        if re.fullmatch(self.regexp_pat, message.text):
+        if re.fullmatch(self.regexp_pat, message.text.lower()):
             return True
         if isinstance(self.text, str) and message.text.lower() == self.text:
             return True

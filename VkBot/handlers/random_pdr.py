@@ -53,7 +53,7 @@ async def dailies_people(message: Message):
         chat_users_db: list[User] = await get_active_users_from_chat(message.chat_id, session)
 
     # Проверка, что сообщение не совпадает с фразой дня и 50% на случайную неудачу
-    if message.text != launch.day_phrase or base_utils.my_random(100) < 50:
+    if message.text.lower() != launch.day_phrase or base_utils.my_random(100) < 50:
         item_try = await items_utils.get_item_sure(Items.launch.value, message.from_id, message.chat_id)
         has_try = True if item_try.expired_date is not None and today < item_try.expired_date else False
         await message.reply(f"{message.text} - эта фраза не является кодом запуска сегодня или является? 🤡\n"
