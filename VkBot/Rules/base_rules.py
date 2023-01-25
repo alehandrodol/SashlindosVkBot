@@ -25,7 +25,7 @@ class TextPlusRegexpRule(ABCRule[Message]):
         return False
 
 
-class ChatIdRule(ABCRule[Message]):
+class ChatIdRule(ABCRule[Message]):  # TODO убрать все упоминания при релизе
     def __init__(self, chat_id: Union[list[int], int] = 1):
         self.chat_id = chat_id
 

@@ -7,13 +7,13 @@ from config import api
 from db.connection import SessionManager
 from db.models import User
 from db.utils.users import get_user_by_user_id, update_user, set_user
-from Rules import TextPlusRegexpRule, ChatIdRule  # TODO ChatIdRule убрать при релизе
+from Rules import TextPlusRegexpRule, ChatIdRule
 from messages.default_msg import PICTURE
 from utils.base_utils import my_random, make_reward, get_photo, change_keyboard
 
 general_labeler = BotLabeler()
 general_labeler.vbml_ignore_case = True
-general_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при релизе
+general_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
 @general_labeler.message(RegexRule(r".*@all.*"))

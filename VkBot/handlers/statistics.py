@@ -8,7 +8,7 @@ from messages import default_msg
 
 stat_labeler = BotLabeler()
 stat_labeler.vbml_ignore_case = True
-stat_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при релизе
+stat_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
 @stat_labeler.message(text=default_msg.ALL_STATS)

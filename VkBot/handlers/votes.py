@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from vkbottle.bot import Message
 from vkbottle.framework.labeler import BotLabeler
 
+from config import ctx_storage
+
 from Rules import ChatIdRule
 from Rules.votes_rules import VoteStartRule
 from config import user_api, moscow_zone
@@ -37,9 +39,12 @@ async def start_vote(message: Message, target_ui: int, rep: int):
         owner_id=-209871225,
         from_group=1,
         attachments=f"poll-209871225_{poll.id}",
-        mute_notifications=1
+        mute_notifications=1  # TODO убрать при релизе
     )
     await message.answer(message="@all Началось голосование!", attachment=f"poll-209871225_{poll.id}")
+
+    polls_list: list[dict[str, datetime | int]] = ctx_storage.get("polls_clearing")
+    polls_list.append({"post_id": post.post_id, "expired_date": datetime.now(tz=moscow_zone) + timedelta(days=1)})
 
     await asyncio.sleep(1801)
     await vote_remind(message)

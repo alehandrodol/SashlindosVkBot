@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from datetime import datetime, timedelta
 
@@ -17,12 +18,14 @@ from utils import daily_utils, base_utils, items_utils
 
 from messages import default_msg
 from my_types import ChosenUser, MultiRoulette, Items
-from Rules import ChatIdRule  # TODO убрать при релизе
+from Rules import ChatIdRule
 
+
+logger = logging.getLogger(__name__)
 
 daily_labeler = BotLabeler()
 daily_labeler.vbml_ignore_case = True
-daily_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при релизе
+daily_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
 @daily_labeler.message(text=default_msg.DAILY)
@@ -52,8 +55,9 @@ async def dailies_people(message: Message):
     async with session_maker() as session:
         chat_users_db: list[User] = await get_active_users_from_chat(message.chat_id, session)
 
-    # Проверка, что сообщение не совпадает с фразой дня и 50% на случайную неудачу
-    if message.text.lower() != launch.day_phrase or base_utils.my_random(100) < 50:
+    logger.info(launch.day_phrase)
+    # Проверка, что сообщение не совпадает с фразой дня и 40% на случайную неудачу
+    if message.text.lower() != launch.day_phrase or base_utils.my_random(100) < 40:
         item_try = await items_utils.get_item_sure(Items.launch.value, message.from_id, message.chat_id)
         has_try = True if item_try.expired_date is not None and today < item_try.expired_date else False
         await message.reply(f"{message.text} - эта фраза не является кодом запуска сегодня или является? 🤡\n"

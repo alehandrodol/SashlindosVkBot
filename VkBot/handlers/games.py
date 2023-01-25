@@ -13,7 +13,7 @@ from utils import games, base_utils
 
 games_labeler = BotLabeler()
 games_labeler.vbml_ignore_case = True
-games_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при релизе
+games_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
 @games_labeler.message(VBMLRule("рулетка"), RouletteRule())

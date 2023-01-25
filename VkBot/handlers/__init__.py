@@ -6,6 +6,7 @@ from .statistics import stat_labeler
 from .items_hands import items_labeler
 from .bot_init import init_labeler
 from .votes import votes_labeler
+from .intervals import posts_clearing
 
 # Располагать от более приоритетных к менее, а при неопределённости более медленные в конец
 labelers = (
@@ -16,8 +17,8 @@ labelers = (
     games_labeler,
     items_labeler,
     chat_labeler,
-    init_labeler
+    init_labeler,
 )
 
 
-__all__ = "labelers"
+__all__ = ("labelers", "posts_clearing")

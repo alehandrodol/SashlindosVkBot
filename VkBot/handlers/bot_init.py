@@ -30,6 +30,6 @@ async def init_bot(message: Message):
             await daily_utils.fill_users(message)
     await create_new_msg_tag(user_id=221767748, chat_id=message.chat_id,
                              attachment="photo-209871225_457239323", num_days=90)
-    await message.answer("all Я родился🥳")  # TODO поставить @ при релизе и выдать msg теги кому надо, и дописать сообщения
+    await message.answer("@all Я родился🥳")  # TODO при релизе выдать msg теги кому надо, и дописать сообщения
     await message.answer("Я слышал здесь обитают настоящие геюги, кажется я попал куда надо😈")
 
