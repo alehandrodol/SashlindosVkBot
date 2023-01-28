@@ -76,7 +76,7 @@ async def dailies_people(message: Message):
                         f"{'' if launch.launch_streak == 1 else addition_msg}")
 
     launch_reward = 26 if launch.launch_streak > 1 else 25
-    await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=25)
+    await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=launch_reward)
     await asyncio.sleep(1)
 
     if launch.year_launch_num is None or today.year > launch.year_launch_num:

@@ -42,3 +42,4 @@ class RouletteType(Enum):
 class Items(Enum):
     launch = "launch_try"
     tags = "item_tag"
+    daily_bonus = "daily_bonus"
