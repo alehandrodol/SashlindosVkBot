@@ -17,7 +17,6 @@ from utils.votes_utils import end_vote, vote_remind
 
 votes_labeler = BotLabeler()
 votes_labeler.vbml_ignore_case = True
-votes_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
 @votes_labeler.message(VoteStartRule())
@@ -38,8 +37,7 @@ async def start_vote(message: Message, target_ui: int, rep: int):
     post = await user_api.wall.post(
         owner_id=-209871225,
         from_group=1,
-        attachments=f"poll-209871225_{poll.id}",
-        mute_notifications=1  # TODO убрать при релизе
+        attachments=f"poll-209871225_{poll.id}"
     )
     await message.answer(message="@all Началось голосование!", attachment=f"poll-209871225_{poll.id}")
 

@@ -115,4 +115,4 @@ async def full_users_check(users_list: list[User], chat_id: int, session: AsyncS
 
 async def spammer(chats: list[Chat], text: str):
     for chat in chats:
-        await api.messages.send(chat_id=chat.id, random_id=my_random(1_000_000_000), message=text)
+        await api.messages.send(chat_id=chat.id, random_id=my_random(1000_000), message=text)

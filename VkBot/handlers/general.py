@@ -13,10 +13,9 @@ from utils.base_utils import my_random, make_reward, get_photo, change_keyboard
 
 general_labeler = BotLabeler()
 general_labeler.vbml_ignore_case = True
-general_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
-@general_labeler.message(RegexRule(r".*@all.*"))
+@general_labeler.message(RegexRule(r".*@all.*"), ChatIdRule(chat_id=1))
 async def dailies_people(message: Message):
     minus_rat = my_random(11)
     await message.reply(f"[id{message.from_id}|Ты] норм? Я тебе сейчас allну по ебалу🤬 (-{minus_rat} рейтинга)")

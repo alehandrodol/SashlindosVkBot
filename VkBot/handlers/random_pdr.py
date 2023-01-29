@@ -25,7 +25,6 @@ logger = logging.getLogger(__name__)
 
 daily_labeler = BotLabeler()
 daily_labeler.vbml_ignore_case = True
-daily_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
 @daily_labeler.message(text=default_msg.DAILY)

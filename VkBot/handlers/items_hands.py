@@ -8,7 +8,6 @@ from db.utils import items, users
 
 items_labeler = BotLabeler()
 items_labeler.vbml_ignore_case = True
-items_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
 @items_labeler.message(CheckTagInsideRule())
