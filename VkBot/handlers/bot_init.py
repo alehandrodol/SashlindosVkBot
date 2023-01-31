@@ -8,8 +8,6 @@ from db.models import User
 from db.utils.chats import get_chat_by_id, set_chat
 from db.utils.users import get_all_users_from_chat
 from utils import daily_utils
-from utils.items_utils import create_new_msg_tag
-from Rules import ChatIdRule
 
 init_labeler = BotLabeler()
 init_labeler.vbml_ignore_case = True
@@ -29,15 +27,6 @@ async def init_bot(message: Message):
         chat_users_db: list[User] = await get_all_users_from_chat(message.chat_id, session)
         if len(chat_users_db) == 0:
             await daily_utils.fill_users(message)
-    if message.chat_id == 1:
-        await create_new_msg_tag(user_id=162889506, chat_id=message.chat_id,
-                                 attachment="photo-209871225_457239207", num_days=180)
-        await create_new_msg_tag(user_id=146549595, chat_id=message.chat_id,
-                                 attachment="photo-209871225_282103569", num_days=180)
-        await create_new_msg_tag(user_id=455752320, chat_id=message.chat_id,
-                                 attachment="photo-209871225_457239239", num_days=180)
-        await create_new_msg_tag(user_id=233035002, chat_id=message.chat_id,
-                                 attachment="photo-209871225_457239080", num_days=180)
     await message.answer("3")
     await asyncio.sleep(1)
     await message.answer("2")

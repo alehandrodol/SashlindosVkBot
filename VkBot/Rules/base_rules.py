@@ -1,10 +1,9 @@
-import re
 import logging
+import re
 from typing import Union, Iterable
 
 from vkbottle.bot import Message
 from vkbottle.dispatch.rules import ABCRule
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +24,17 @@ class TextPlusRegexpRule(ABCRule[Message]):
         return False
 
 
-class ChatIdRule(ABCRule[Message]):  # TODO убрать все упоминания при релизе
+class ExactUserRule(ABCRule[Message]):
+    def __init__(self, user_id: int):
+        self.user_id = user_id
+
+    async def check(self, message: Message) -> bool:
+        if message.from_id == self.user_id:
+            return True
+        return False
+
+
+class ChatIdRule(ABCRule[Message]):
     def __init__(self, chat_id: Union[list[int], int] = 1):
         self.chat_id = chat_id
 

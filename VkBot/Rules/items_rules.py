@@ -1,12 +1,11 @@
 import re
-from typing import Union
 from datetime import datetime
+from typing import Union
 
 from vkbottle.bot import Message
 from vkbottle.dispatch.rules import ABCRule
 
 from config import moscow_zone
-
 from db.connection import SessionManager
 from db.models import Inventory, User
 from db.utils import items, users

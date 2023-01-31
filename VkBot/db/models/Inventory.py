@@ -1,6 +1,6 @@
-from db.config import DeclarativeBase
-
 from sqlalchemy import Column, Integer, String, ForeignKey, Date
+
+from db.config import DeclarativeBase
 
 
 class Inventory(DeclarativeBase):

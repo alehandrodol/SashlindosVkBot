@@ -1,8 +1,8 @@
 from typing import Optional
 
 from sqlalchemy.engine import ScalarResult
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from db.models import Chat
 

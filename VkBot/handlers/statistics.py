@@ -1,10 +1,9 @@
 from vkbottle.bot import Message
 from vkbottle.framework.labeler import BotLabeler
 
-from Rules import ChatIdRule
 from db.models import User
-from utils import stats_utils
 from messages import default_msg
+from utils import stats_utils
 
 stat_labeler = BotLabeler()
 stat_labeler.vbml_ignore_case = True

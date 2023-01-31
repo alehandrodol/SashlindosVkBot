@@ -5,10 +5,8 @@ from datetime import datetime, timedelta
 from vkbottle.bot import Message
 from vkbottle.framework.labeler import BotLabeler
 
-from config import ctx_storage
-
-from Rules import ChatIdRule
 from Rules.votes_rules import VoteStartRule
+from config import ctx_storage
 from config import user_api, moscow_zone
 from db.connection import SessionManager
 from db.models import Votes

@@ -1,21 +1,24 @@
+from sqlalchemy import delete
+from sqlalchemy.future import select
 from vkbottle.bot import Message
 from vkbottle.dispatch.rules.base import RegexRule
 from vkbottle.framework.labeler import BotLabeler
 
+from Rules import TextPlusRegexpRule
 from config import api
-
 from db.connection import SessionManager
-from db.models import User
+from db.models import User, Inventory, TagDoc
+from db.utils.chats import get_chats_list
 from db.utils.users import get_user_by_user_id, update_user, set_user
-from Rules import TextPlusRegexpRule, ChatIdRule
 from messages.default_msg import PICTURE
 from utils.base_utils import my_random, make_reward, get_photo, change_keyboard
+from utils.items_utils import create_new_msg_tag
 
 general_labeler = BotLabeler()
 general_labeler.vbml_ignore_case = True
 
 
-@general_labeler.message(RegexRule(r".*@all.*"), ChatIdRule(chat_id=1))
+@general_labeler.message(RegexRule(r".*@all.*"))
 async def dailies_people(message: Message):
     minus_rat = my_random(11)
     await message.reply(f"[id{message.from_id}|Ты] норм? Я тебе сейчас allну по ебалу🤬 (-{minus_rat} рейтинга)")
@@ -75,3 +78,35 @@ async def invite(message: Message):
         user.is_active = True
         await update_user(user)
         await message.answer(f"О, чел вернулся, записал")
+
+
+@general_labeler.message(text="верни фишку Попу сука")
+async def tags_ret(message: Message):
+    session_maker = SessionManager().get_session_maker()
+    async with session_maker() as session:
+        chats = await get_chats_list(session)
+        pop = await get_user_by_user_id(146549595, chats[1].id, session)
+        q_i = select(Inventory).where(Inventory.user_row_id == pop.row_id, Inventory.item_name == "item_tag")
+        items = (await session.scalars(q_i)).all()
+        for i in items:
+            q = delete(TagDoc).where(TagDoc.inventory_id == i.id)
+            await session.execute(q)
+        q_i = delete(Inventory).where(Inventory.user_row_id == pop.row_id, Inventory.item_name == "item_tag")
+        await session.execute(q_i)
+    await create_new_msg_tag(user_id=146549595, chat_id=message.chat_id,
+                             attachment="photo-209871225_457239337", num_days=180)
+    await message.answer("Так, возможно вернул твою фишку, я уже не уверен...")
+
+
+@general_labeler.message(text="diagnos")
+async def diag(message: Message):
+    session_maker = SessionManager().get_session_maker()
+    async with session_maker() as session:
+        chats = await get_chats_list(session)
+        pop = await get_user_by_user_id(146549595, chats[1].id, session)
+        await message.answer(f"row_id={pop.row_id}")
+        q_i = select(Inventory).where(Inventory.user_row_id == pop.row_id, Inventory.item_name == "item_tag")
+        items = (await session.scalars(q_i)).all()
+        for i in items:
+            await message.answer(f"id={i.id}, row_id={i.user_row_id}, item_name={i.item_name}")
+

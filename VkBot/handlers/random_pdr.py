@@ -1,25 +1,19 @@
 import asyncio
 import logging
-
 from datetime import datetime, timedelta
 
 from vkbottle.bot import BotLabeler, Message
-from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
+from vkbottle_types.codegen.objects import UsersUserFull
 
 from config import api, ctx_storage, moscow_zone
-
 from db.connection import SessionManager
-from db.utils.users import get_active_users_from_chat, update_user
-from db.utils.items import update_item
-from db.utils.chats import get_chat_by_id
 from db.models import Chat, LaunchInfo, User
-
-from utils import daily_utils, base_utils, items_utils
-
+from db.utils.chats import get_chat_by_id
+from db.utils.items import update_item
+from db.utils.users import get_active_users_from_chat, update_user
 from messages import default_msg
 from my_types import ChosenUser, MultiRoulette, Items
-from Rules import ChatIdRule
-
+from utils import daily_utils, base_utils, items_utils
 
 logger = logging.getLogger(__name__)
 

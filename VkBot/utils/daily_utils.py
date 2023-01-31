@@ -1,21 +1,16 @@
 import logging
 from datetime import datetime
-
 from enum import Enum
 
-import pytz
 from vkbottle.bot import Message
 from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
 
 from config import moscow_zone
 from db.connection import SessionManager
-from db.utils.users import set_user, get_user_by_user_id
 from db.models import Chat, LaunchInfo, User
-
+from db.utils.users import set_user, get_user_by_user_id
 from messages import default_msg
-
 from my_types import ChosenUser
-
 from utils.base_utils import my_random
 
 logger = logging.getLogger(__name__)

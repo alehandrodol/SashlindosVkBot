@@ -1,8 +1,8 @@
 from datetime import date
 from typing import Optional
 
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from db.connection import SessionManager
 from db.models import Inventory, TagDoc
@@ -50,3 +50,15 @@ async def set_tags_docs(inventory_id: int, attachment: str, session: AsyncSessio
     session.add(tag_doc)
     await session.commit()
     return tag_doc
+
+
+async def update_tag_doc(tag: TagDoc, session: Optional[AsyncSession] = None) -> None:
+    if session is not None:
+        session.add(tag)
+        await session.commit()
+        return
+    session_maker = SessionManager().get_session_maker()
+    async with session_maker() as session:
+        session.add(tag)
+        await session.commit()
+    return

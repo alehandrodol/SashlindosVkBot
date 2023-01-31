@@ -2,15 +2,13 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from vkbottle.bot import Message
 from vkbottle_types.objects import PhotosPhoto
 
 from config import user_api, api
 from db.connection import SessionManager
 from db.models import User, Chat
 from db.utils import users
-from db.utils.chats import get_chat_by_id, set_chat, get_chats_list
+from db.utils.chats import get_chats_list
 from db.utils.launch import get_launch_info_by_chat_id, set_launch_info
 
 
