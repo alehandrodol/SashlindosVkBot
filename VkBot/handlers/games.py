@@ -1,10 +1,11 @@
 import asyncio
+from datetime import datetime
 
 from vkbottle.bot import BotLabeler, Message
 from vkbottle.dispatch.rules.base import VBMLRule
 
 from Rules import RouletteRule, ChooseRoulette, ExactUserRule
-from config import ctx_storage
+from config import ctx_storage, moscow_zone
 from my_types import Color, RouletteType, MultiRoulette
 from my_types.objects import reds, blacks
 from utils import games, base_utils
@@ -66,10 +67,11 @@ async def start_roulette(message: Message, args: tuple[RouletteType, str]):
 
 @games_labeler.message(ExactUserRule(user_id=221767748), text="update_roulette")
 async def roulette_update(message: Message):
+    today = datetime.now(tz=moscow_zone).date()
     ctx_storage.set(
         "MultiRoulette",
         MultiRoulette(
-            date_for_multi=None,
+            date_for_multi=today,
             users_award={
                 261496449: 100,
                 233035002: 101,
@@ -77,3 +79,4 @@ async def roulette_update(message: Message):
             }
         )
     )
+    return ctx_storage.get("MultiRoulette")
