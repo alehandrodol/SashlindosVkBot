@@ -1,10 +1,9 @@
-from enum import Enum
-from typing import Optional
 from dataclasses import dataclass
 from datetime import date
+from enum import Enum
+from typing import Optional
 
 from db.models import User
-
 
 user_id = int
 reward = int
@@ -42,3 +41,4 @@ class RouletteType(Enum):
 class Items(Enum):
     launch = "launch_try"
     tags = "item_tag"
+    daily_bonus = "daily_bonus"

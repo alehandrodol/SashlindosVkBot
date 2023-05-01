@@ -1,8 +1,8 @@
-from typing import Optional, Union
+from typing import Optional
 
-from sqlalchemy.future import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine.result import ScalarResult
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from db.connection import SessionManager
 from db.models import User

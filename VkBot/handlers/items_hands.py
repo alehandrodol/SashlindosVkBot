@@ -1,14 +1,13 @@
 from vkbottle.bot import Message
 from vkbottle.framework.labeler import BotLabeler
 
-from Rules import ChatIdRule, CheckTagInsideRule
+from Rules import CheckTagInsideRule
 from db.connection import SessionManager
 from db.models import User, Inventory, TagDoc
-from db.utils import items, users
+from db.utils import items
 
 items_labeler = BotLabeler()
 items_labeler.vbml_ignore_case = True
-items_labeler.auto_rules = [ChatIdRule(chat_id=1)]
 
 
 @items_labeler.message(CheckTagInsideRule())

@@ -1,9 +1,8 @@
 import logging
-from environs import Env
 
+from environs import Env
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-
 
 logger = logging.getLogger(__name__)
 

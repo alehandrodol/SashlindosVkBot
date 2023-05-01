@@ -1,6 +1,6 @@
-from db.config import DeclarativeBase
-
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, Boolean
+
+from db.config import DeclarativeBase
 
 
 class Chat(DeclarativeBase):

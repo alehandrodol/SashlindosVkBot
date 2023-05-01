@@ -1,20 +1,18 @@
 from vkbottle.bot import Message
 from vkbottle.framework.labeler import BotLabeler
 
-from Rules import ChatIdRule
 from db.models import User
-from utils import stats_utils
 from messages import default_msg
+from utils import stats_utils
 
 stat_labeler = BotLabeler()
 stat_labeler.vbml_ignore_case = True
-stat_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при релизе
 
 
 @stat_labeler.message(text=default_msg.ALL_STATS)
 async def all_stat(message: Message):
     user_param = User.user_id
-    match message.text:
+    match message.text.lower():
         case "статистика":
             user_param = User.pdr_num
         case "пассивные":

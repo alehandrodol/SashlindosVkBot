@@ -1,10 +1,9 @@
-import re
 import logging
+import re
 from typing import Union, Iterable
 
 from vkbottle.bot import Message
 from vkbottle.dispatch.rules import ABCRule
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -15,12 +14,22 @@ class TextPlusRegexpRule(ABCRule[Message]):
         self.text = text
 
     async def check(self, message: Message) -> bool:
-        if re.fullmatch(self.regexp_pat, message.text):
+        if re.fullmatch(self.regexp_pat, message.text.lower()):
             return True
         if isinstance(self.text, str) and message.text.lower() == self.text:
             return True
         msgs = set(self.text)
         if message.text.lower() in msgs:
+            return True
+        return False
+
+
+class ExactUserRule(ABCRule[Message]):
+    def __init__(self, user_id: int):
+        self.user_id = user_id
+
+    async def check(self, message: Message) -> bool:
+        if message.from_id == self.user_id:
             return True
         return False
 

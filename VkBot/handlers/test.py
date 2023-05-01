@@ -3,7 +3,6 @@ from vkbottle.dispatch.rules.base import CommandRule
 
 from Rules import ChatIdRule
 from config import api
-from utils.base_utils import my_random
 
 chat_labeler = BotLabeler()
 chat_labeler.vbml_ignore_case = True

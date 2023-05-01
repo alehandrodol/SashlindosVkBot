@@ -1,12 +1,10 @@
 from datetime import datetime
-
 from typing import Union
 
 from vkbottle.bot import Message
 from vkbottle.dispatch.rules import ABCRule
 
 from config import ctx_storage, moscow_zone
-
 from my_types import MultiRoulette, RouletteType
 
 
@@ -17,7 +15,6 @@ class RouletteRule(ABCRule[Message]):
             return False
 
         if message.from_id not in multi_roulette.users_award.keys():
-            print(multi_roulette.users_award.keys())
             await message.answer("Вы сегодня не состоите в номинации или уже использовали😬")
             return False
 

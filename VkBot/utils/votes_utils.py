@@ -1,11 +1,9 @@
 from vkbottle.bot import Message
 
 from config import user_api
-
-from utils.base_utils import make_reward
-
 from db.models import Votes, User
 from db.utils import votes, users
+from utils.base_utils import make_reward
 
 message_true = "Голосование завершено!\nРезультат положительный🥳\n• {first} {last} {g_or_l} {rep} рейтинга!!!"
 
@@ -27,4 +25,4 @@ async def end_vote(message: Message, poll_id: int, rep: str, vote: Votes):
             rep=rep
         ))
     else:
-        await message.answer("Голосование завершено!\nРезультат отрицательный🥲\n")
+        await message.answer("Голосование завершено!\nРезультат отрицательный😐\n")

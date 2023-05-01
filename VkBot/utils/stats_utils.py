@@ -1,5 +1,3 @@
-from typing import Union, Type
-
 from vkbottle.bot import Message
 
 from db.connection import SessionManager

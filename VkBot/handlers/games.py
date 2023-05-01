@@ -1,19 +1,17 @@
 import asyncio
+from datetime import datetime
 
 from vkbottle.bot import BotLabeler, Message
 from vkbottle.dispatch.rules.base import VBMLRule
 
-from config import ctx_storage
-
-from Rules import RouletteRule, ChooseRoulette, ChatIdRule
+from Rules import RouletteRule, ChooseRoulette, ExactUserRule
+from config import ctx_storage, moscow_zone
 from my_types import Color, RouletteType, MultiRoulette
 from my_types.objects import reds, blacks
 from utils import games, base_utils
 
-
 games_labeler = BotLabeler()
 games_labeler.vbml_ignore_case = True
-games_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при релизе
 
 
 @games_labeler.message(VBMLRule("рулетка"), RouletteRule())
@@ -65,3 +63,20 @@ async def start_roulette(message: Message, args: tuple[RouletteType, str]):
     await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=reward * (result-1))
     multi_roulette.users_award.pop(message.from_id)
     ctx_storage.set("MultiRoulette", multi_roulette)
+
+
+@games_labeler.message(ExactUserRule(user_id=221767748), text="update_roulette")
+async def roulette_update(message: Message):
+    today = datetime.now(tz=moscow_zone).date()
+    ctx_storage.set(
+        "MultiRoulette",
+        MultiRoulette(
+            date_for_multi=today,
+            users_award={
+                261496449: 100,
+                233035002: 101,
+                411320641: 50
+            }
+        )
+    )
+    return ctx_storage.get("MultiRoulette")

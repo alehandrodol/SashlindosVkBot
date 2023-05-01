@@ -1,21 +1,16 @@
 import logging
 from datetime import datetime
-
 from enum import Enum
 
-import pytz
 from vkbottle.bot import Message
 from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
 
 from config import moscow_zone
 from db.connection import SessionManager
-from db.utils.users import set_user, get_user_by_user_id
 from db.models import Chat, LaunchInfo, User
-
+from db.utils.users import set_user, get_user_by_user_id
 from messages import default_msg
-
 from my_types import ChosenUser
-
 from utils.base_utils import my_random
 
 logger = logging.getLogger(__name__)
@@ -83,9 +78,25 @@ async def calculate_daily_points(user_id: int, chat: Chat, launch: LaunchInfo, s
         res_points += 1
         res_list_msg.append("• +1 за пидора года 😎")
 
-    if user_id == 221767748:
+    if user_id == 221767748:  # TODO заменить индивидуальные бонусы на специальные айтемы в базе
         res_points += 1
         res_list_msg.append("• +1 за то, что этот чел гений 👨🏻‍💻")
+
+    if user_id == 162889506:
+        res_points += 1
+        res_list_msg.append("• +1 за самого рейтингового чувака прошлого года")
+
+    if user_id == 146549595:
+        res_points += 1
+        res_list_msg.append("• +1 за одного из самых пассивных чуваков прошлого года")
+
+    if user_id == 455752320:
+        res_points += 1
+        res_list_msg.append("• +1 за одного из самых пассивных чуваков прошлого года")
+
+    if user_id == 233035002:
+        res_points += 1
+        res_list_msg.append("• +1 за самого частого пидора дня прошлого года")
 
     return res_points, "\n".join(res_list_msg)
 

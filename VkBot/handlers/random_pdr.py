@@ -1,28 +1,24 @@
 import asyncio
-
+import logging
 from datetime import datetime, timedelta
 
 from vkbottle.bot import BotLabeler, Message
-from vkbottle_types.codegen.objects import UsersUserFull, MessagesGetConversationMembers
+from vkbottle_types.codegen.objects import UsersUserFull
 
 from config import api, ctx_storage, moscow_zone
-
 from db.connection import SessionManager
-from db.utils.users import get_active_users_from_chat, update_user
-from db.utils.items import update_item
-from db.utils.chats import get_chat_by_id
 from db.models import Chat, LaunchInfo, User
-
-from utils import daily_utils, base_utils, items_utils
-
+from db.utils.chats import get_chat_by_id
+from db.utils.items import update_item
+from db.utils.users import get_active_users_from_chat, update_user
 from messages import default_msg
 from my_types import ChosenUser, MultiRoulette, Items
-from Rules import ChatIdRule  # TODO убрать при релизе
+from utils import daily_utils, base_utils, items_utils
 
+logger = logging.getLogger(__name__)
 
 daily_labeler = BotLabeler()
 daily_labeler.vbml_ignore_case = True
-daily_labeler.auto_rules = [ChatIdRule(chat_id=1)]  # TODO убрать при релизе
 
 
 @daily_labeler.message(text=default_msg.DAILY)
@@ -52,8 +48,9 @@ async def dailies_people(message: Message):
     async with session_maker() as session:
         chat_users_db: list[User] = await get_active_users_from_chat(message.chat_id, session)
 
-    # Проверка, что сообщение не совпадает с фразой дня и 50% на случайную неудачу
-    if message.text != launch.day_phrase or base_utils.my_random(100) < 50:
+    logger.info(launch.day_phrase)
+    # Проверка, что сообщение не совпадает с фразой дня и 40% на случайную неудачу
+    if message.text.lower() != launch.day_phrase or base_utils.my_random(100) < 40:
         item_try = await items_utils.get_item_sure(Items.launch.value, message.from_id, message.chat_id)
         has_try = True if item_try.expired_date is not None and today < item_try.expired_date else False
         await message.reply(f"{message.text} - эта фраза не является кодом запуска сегодня или является? 🤡\n"
@@ -72,7 +69,7 @@ async def dailies_people(message: Message):
                         f"{'' if launch.launch_streak == 1 else addition_msg}")
 
     launch_reward = 26 if launch.launch_streak > 1 else 25
-    await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=25)
+    await base_utils.make_reward(user_id=message.from_id, chat_id=message.chat_id, points=launch_reward)
     await asyncio.sleep(1)
 
     if launch.year_launch_num is None or today.year > launch.year_launch_num:

@@ -1,6 +1,6 @@
-from db.config import DeclarativeBase
-
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+
+from db.config import DeclarativeBase
 
 
 class User(DeclarativeBase):

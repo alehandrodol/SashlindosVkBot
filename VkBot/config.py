@@ -28,9 +28,15 @@ ctx_storage.set(
         users_award={}
     )
 )
+ctx_storage.set("polls_clearing", [])
 
 bot = Bot(
     api=api,
     labeler=labeler,
     state_dispenser=state_dispenser
+)
+
+dummy_bot = Bot(
+    api=API(env.str("TOKEN")),
+    labeler=BotLabeler()
 )
