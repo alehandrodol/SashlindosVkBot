@@ -80,7 +80,12 @@ async def invite(message: Message):
         await message.answer(f"О, чел вернулся, записал")
 
 
-@general_labeler.message(text="верни фишку Попу сука")
+@general_labeler.message(text="команды")
+async def give_instructs(message: Message):
+    await message.answer("Здесь можно посмотреть все команды", attachment="wall-209871225_36")
+
+
+# @general_labeler.message(text="верни фишку Попу сука")
 async def tags_ret(message: Message):
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
@@ -98,7 +103,7 @@ async def tags_ret(message: Message):
     await message.answer("Так, возможно вернул твою фишку, я уже не уверен...")
 
 
-@general_labeler.message(text="diagnos")
+# @general_labeler.message(text="diagnos")
 async def diag(message: Message):
     session_maker = SessionManager().get_session_maker()
     async with session_maker() as session:
