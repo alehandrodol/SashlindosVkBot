@@ -1,8 +1,0 @@
-# fly.toml file generated for pdr-bot on 2023-01-24T02:36:50+03:00
-
-app = "pdr-bot"
-kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
-
-[env]
