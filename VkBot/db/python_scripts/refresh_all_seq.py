@@ -5,7 +5,7 @@ conn = psycopg2.connect(
     host="rc1b-yg488vnhrlssml6z.mdb.yandexcloud.net",
     database="db1",
     user="user1",
-    password="Tozafa_alex02",
+    password="<password>",
     port="6432"
 )
 
