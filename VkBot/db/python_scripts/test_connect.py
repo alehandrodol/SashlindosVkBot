@@ -6,7 +6,7 @@ conn = psycopg2.connect("""
     sslmode=verify-full
     dbname=db1
     user=user1
-    password=Tozafa_alex02
+    password=<password>
     target_session_attrs=read-write
 """)
 
